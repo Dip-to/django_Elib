@@ -1,7 +1,7 @@
 {% extends 'base.html' %}{% load static %}{% block pageContent %}
 <style>
     body {
-        background-image:url('{% static "assets/default/img/wallpaper.jpg" %}');
+        background-image:url('{% static "assets/default/img/bg.jpg" %}');
         background-repeat: no-repeat;
         background-size: cover;
     }
@@ -16,8 +16,8 @@
     }
     
     #logo-img {
-        height: 7em;
-        width: 7em;
+        height: 11em;
+        width: 11em;
         object-fit: cover;
         object-position: center center;
     }
@@ -26,12 +26,14 @@
         font-size: 3em;
         color: #f7f7f7;
         font-family: cursive;
-        text-shadow: 2px 2px 12px #b7652a;
+        text-shadow: 2px 2px 2px #1414a5;
+        -webkit-text-stroke-color: 2px 2px 12px rgb(4, 5, 5);
+   
     }
 </style>
 <div class="d-flex flex-column w-100 justify-content-center align-items-center">
     <div class="text-center">
-        <img src="{% static 'assets/default/img/logo.jpg' %}" alt="Logo" class="bg-gradient bg-dark bg-opacity-75 rounded-circle padding-0 border" id="logo-img">
+        <img src="{% static 'assets/default/img/E-Lib.png' %}" alt="Logo" class="bg-gradient bg-transparent bg-opacity-50 rounded-circle padding-100 border" id="logo-img">
     </div>
     <div class="col-lg-6 col-md-8 col-sm-12 col-xs-12 py-5 mb-3">
         <h2 class="text-center fw-bolder" id="page-title">{{system_name}}</h2>

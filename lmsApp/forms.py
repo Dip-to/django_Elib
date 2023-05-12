@@ -164,16 +164,17 @@ class SaveBook(forms.ModelForm):
             raise forms.ValidationError("Invalid Sub Category.")
 
     def clean_isbn(self):
-        id = int(self.data['id']) if (self.data['id']).isnumeric() else 0
+        id = int(self.data.get('id', 0)) if self.data.get('id', '').isnumeric() else 0
         isbn = self.cleaned_data['isbn']
         try:
             if id > 0:
-                book = models.Books.objects.exclude(id = id).get(isbn = isbn, delete_flag = 0)
+                book = models.Books.objects.exclude(id=id).get(isbn=isbn, delete_flag=0)
             else:
-                book = models.Books.objects.get(isbn = isbn, delete_flag = 0)
+                book = models.Books.objects.get(isbn=isbn, delete_flag=0)
         except:
             return isbn
-        raise forms.ValidationError("ISBN already exists on the Database.")
+        raise forms.ValidationError("ISBN already exists in the database.")
+
   
 class SaveStudent(forms.ModelForm):
     code = forms.CharField(max_length=250)

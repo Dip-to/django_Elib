@@ -25,7 +25,7 @@ class Category(models.Model):
 
     def __str__(self):
         return str(f"{self.name}")
- 
+
 
 class SubCategory(models.Model):
     category = models.ForeignKey(Category, on_delete= models.CASCADE)
