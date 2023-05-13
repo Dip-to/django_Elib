@@ -11,6 +11,8 @@ from django.contrib.auth.forms import UserCreationForm,PasswordChangeForm, UserC
 from django.contrib.auth.models import User
 import datetime
 
+# Defining a form for saving a user
+
 class SaveUser(UserCreationForm):
     username = forms.CharField(max_length=250,help_text="The Username field is required.")
     email = forms.EmailField(max_length=250,help_text="The Email field is required.")
@@ -23,6 +25,8 @@ class SaveUser(UserCreationForm):
         model = User
         fields = ('email', 'username','first_name', 'last_name','password1', 'password2',)
 
+# Defining a form for updating a user profile
+
 class UpdateProfile(UserChangeForm):
     username = forms.CharField(max_length=250,help_text="The Username field is required.")
     email = forms.EmailField(max_length=250,help_text="The Email field is required.")
@@ -34,11 +38,13 @@ class UpdateProfile(UserChangeForm):
         model = User
         fields = ('email', 'username','first_name', 'last_name')
 
-    def clean_current_password(self):
+
+    def clean_current_password(self): # Validates if the current password provided matches the user's actual password
         if not self.instance.check_password(self.cleaned_data['current_password']):
             raise forms.ValidationError(f"Password is Incorrect")
-
-    def clean_email(self):
+        
+    
+    def clean_email(self):# Validates if the email is already taken by another user
         email = self.cleaned_data['email']
         try:
             user = User.objects.exclude(id=self.cleaned_data['id']).get(email = email)
@@ -46,13 +52,15 @@ class UpdateProfile(UserChangeForm):
             return email
         raise forms.ValidationError(f"The {user.email} mail is already exists/taken")
 
-    def clean_username(self):
+    def clean_username(self): # Validates if the username is already taken by another user
         username = self.cleaned_data['username']
         try:
             user = User.objects.exclude(id=self.cleaned_data['id']).get(username = username)
         except Exception as e:
             return username
         raise forms.ValidationError(f"The {user.username} mail is already exists/taken")
+    
+# Defining a form for updating user information
 
 class UpdateUser(UserChangeForm):
     username = forms.CharField(max_length=250,help_text="The Username field is required.")
@@ -64,7 +72,7 @@ class UpdateUser(UserChangeForm):
         model = User
         fields = ('email', 'username','first_name', 'last_name')
 
-    def clean_email(self):
+    def clean_email(self):# Validates if the email is already taken by another user
         email = self.cleaned_data['email']
         try:
             user = User.objects.exclude(id=self.cleaned_data['id']).get(email = email)
@@ -72,7 +80,7 @@ class UpdateUser(UserChangeForm):
             return email
         raise forms.ValidationError(f"The {user.email} mail is already exists/taken")
 
-    def clean_username(self):
+    def clean_username(self):# Validates if the username is already taken by another user
         username = self.cleaned_data['username']
         try:
             user = User.objects.exclude(id=self.cleaned_data['id']).get(username = username)
@@ -80,6 +88,8 @@ class UpdateUser(UserChangeForm):
             return username
         raise forms.ValidationError(f"The {user.username} mail is already exists/taken")
 
+
+# Defining a form for updating user passwords
 class UpdatePasswords(PasswordChangeForm):
     old_password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control form-control-sm rounded-0'}), label="Old Password")
     new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control form-control-sm rounded-0'}), label="New Password")
@@ -88,7 +98,7 @@ class UpdatePasswords(PasswordChangeForm):
         model = User
         fields = ('old_password','new_password1', 'new_password2')
 
-class SaveCategory(forms.ModelForm):
+class SaveCategory(forms.ModelForm):# Defining a form for saving a category
     name = forms.CharField(max_length=250)
     description = forms.Textarea()
     status = forms.CharField(max_length=2)
@@ -97,7 +107,7 @@ class SaveCategory(forms.ModelForm):
         model = models.Category
         fields = ('name', 'description', 'status', )
 
-    def clean_name(self):
+    def clean_name(self): # Validates if the category name already exists
         id = self.data['id'] if (self.data['id']).isnumeric() else 0
         name = self.cleaned_data['name']
         try:
@@ -109,6 +119,7 @@ class SaveCategory(forms.ModelForm):
             return name
         raise forms.ValidationError("Category Name already exists.")
 
+# Defining a form for saving a subcategory
 class SaveSubCategory(forms.ModelForm):
     category = forms.CharField(max_length=250)
     name = forms.CharField(max_length=250)
@@ -119,7 +130,7 @@ class SaveSubCategory(forms.ModelForm):
         model = models.SubCategory
         fields = ('category', 'name', 'description', 'status', )
 
-    def clean_category(self):
+    def clean_category(self):# Validates if the selected category is valid
         cid = int(self.data['category']) if (self.data['category']).isnumeric() else 0
         try:
             category = models.Category.objects.get(id = cid)
@@ -127,7 +138,7 @@ class SaveSubCategory(forms.ModelForm):
         except:
             raise forms.ValidationError("Invalid Category.")
 
-    def clean_name(self):
+    def clean_name(self):# Validates if the subcategory name already exists within the selected category
         id = int(self.data['id']) if (self.data['id']).isnumeric() else 0
         cid = int(self.data['category']) if (self.data['category']).isnumeric() else 0
         name = self.cleaned_data['name']
@@ -140,7 +151,8 @@ class SaveSubCategory(forms.ModelForm):
         except:
             return name
         raise forms.ValidationError("Sub-Category Name already exists on the selected Category.")
-     
+
+# Defining a form for saving a book     
 class SaveBook(forms.ModelForm):
     sub_category = forms.CharField(max_length=250)
     isbn = forms.CharField(max_length=250)
@@ -155,7 +167,7 @@ class SaveBook(forms.ModelForm):
         model = models.Books
         fields = ('isbn', 'sub_category', 'title', 'description', 'author', 'publisher', 'date_published', 'status', )
 
-    def clean_sub_category(self):
+    def clean_sub_category(self):# Validates if the selected subcategory is valid
         scid = int(self.data['sub_category']) if (self.data['sub_category']).isnumeric() else 0
         try:
             sub_category = models.SubCategory.objects.get(id = scid)
@@ -163,7 +175,7 @@ class SaveBook(forms.ModelForm):
         except:
             raise forms.ValidationError("Invalid Sub Category.")
 
-    def clean_isbn(self):
+    def clean_isbn(self): # Validates if the book name already exists within the selected subcategory
         id = int(self.data.get('id', 0)) if self.data.get('id', '').isnumeric() else 0
         isbn = self.cleaned_data['isbn']
         try:
@@ -175,7 +187,7 @@ class SaveBook(forms.ModelForm):
             return isbn
         raise forms.ValidationError("ISBN already exists in the database.")
 
-  
+# Defining a form for saving a Member    
 class SaveStudent(forms.ModelForm):
     code = forms.CharField(max_length=250)
     first_name = forms.CharField(max_length=250)
@@ -193,7 +205,7 @@ class SaveStudent(forms.ModelForm):
         model = models.Students
         fields = ('code', 'first_name', 'middle_name', 'last_name', 'gender', 'contact', 'email', 'address', 'department', 'status', )
 
-    
+# Defining a form for saving a borrowinf transaction   
 class SaveBorrow(forms.ModelForm):
     student = forms.CharField(max_length=250)
     book = forms.CharField(max_length=250)
@@ -205,7 +217,7 @@ class SaveBorrow(forms.ModelForm):
         model = models.Borrow
         fields = ('student', 'book', 'borrowing_date', 'return_date', 'status', )
 
-    def clean_student(self):
+    def clean_student(self): # Validates if the provided Member identifier exists in the database
         student = int(self.data['student']) if (self.data['student']).isnumeric() else 0
         try:
             student = models.Students.objects.get(id = student)
@@ -213,7 +225,7 @@ class SaveBorrow(forms.ModelForm):
         except:
             raise forms.ValidationError("Invalid User.")
             
-    def clean_book(self):
+    def clean_book(self): # Validates if the provided book identifier exists in the database
         book = int(self.data['book']) if (self.data['book']).isnumeric() else 0
         try:
             book = models.Books.objects.get(id = book)
