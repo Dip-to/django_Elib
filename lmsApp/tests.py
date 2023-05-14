@@ -1,5 +1,6 @@
 from django.test import TestCase
 import datetime
+import time
 from .models import Category, SubCategory, Books, Students, Borrow
 from .forms import SaveBorrow,SaveBook
 from lmsApp import models
@@ -203,6 +204,7 @@ class TransactionHistoryTestCase(TestCase):
 
 class SaveBookTestCase(TestCase):
     def setUp(self):
+        time.sleep(2)
         # Create necessary objects for testing
         category = Category.objects.create(name='Test Category')
         sub_category = SubCategory.objects.create(category=category, name='Test Subcategory')
@@ -245,6 +247,7 @@ class SaveBookTestCase(TestCase):
 
 class TestModels(TestCase):
     def setUp(self):
+        time.sleep(1)
         self.category = Category.objects.create(name='Category 1', description='Category description')
         self.subcategory = SubCategory.objects.create(category=self.category, name='Subcategory 1', description='Subcategory description')
         self.book = Books.objects.create(sub_category=self.subcategory, isbn='1234', title='Book 1', description='Book description', author='Author', publisher='Publisher', date_published=timezone.now())
